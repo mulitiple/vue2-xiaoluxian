@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
+import CoursePlay from '../views/course/CoursePlay'
 
 Vue.use(VueRouter)
 
@@ -11,12 +12,19 @@ const routes = [
     component: Home
   },
   {
-    path: '/about',
-    name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
+    path: '/course',
+    name: 'Course',
+    component: () => import('../views/course/Course.vue')
+  },
+  {
+    path:'/course-info/:courseId',
+    name:'course-info',
+    component: () => import('../views/course/CourseInfo.vue'),
+  },
+  {
+    path:'/course-play/:courseId/:chapterId',
+    name:'course-play',
+    component: CoursePlay
   }
 ]
 

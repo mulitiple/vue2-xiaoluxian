@@ -4,6 +4,15 @@ import './registerServiceWorker'
 import router from './router'
 import store from './store'
 
+// 全局css文件
+import '@/assets/reset.css'
+
+// 引入element-ui
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
+Vue.use(ElementUI);
+
+
 Vue.config.productionTip = false
 
 new Vue({
