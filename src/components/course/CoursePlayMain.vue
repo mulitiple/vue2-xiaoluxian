@@ -6,12 +6,17 @@
     </div>
     <div class="play">
       <div class="play-left" >
-        <!-- <video-player class="video-player vjs-custom-skin"
+        <!-- 播放视频为防止防盗链拒绝请求 使用内网穿透改本机IP 来获取资源 -->
+        <!-- 因此处在小鹿线服务器上设置 不能实现视频播放效果 -->
+        <video-player class="video-player vjs-custom-skin"
             ref="videoPlayer"
             :playsinline="true" id="abc"
             :options="playerOptions"
-        ></video-player> -->
-        <div class="loading" >
+            @ready="playerReadied($event)"
+            @timeupdate="onPlayerTimeupdate($event)"
+            @ended="onPlayerEnded($event)"
+        ></video-player>
+        <!-- <div class="loading" >
           <img src="/image/loading.gif" alt="">
           加载中...
         </div>
@@ -27,7 +32,7 @@
             <button class="over-btn goHome">返回首页</button>
             <button class="over-btn goCourse" >返回课程</button>
           </div>
-        </div>
+        </div> -->
       </div>
       <div class="play-right" ref="wrapper">
         <el-tabs tab-position="right">
@@ -95,8 +100,19 @@
 </template>
 
 <script>
-import { playerPlay} from '@/common/api/course'
+import { playerPlay,recordHistory,historyByChapterId} from '@/common/api/course'
+import { videoPlayer } from 'vue-video-player'
+import 'video.js/dist/video-js.css'
+import { mapState } from 'vuex'
 export default{
+  components:{
+    videoPlayer
+  },
+  computed:{
+    ...mapState({
+      userInfo:state => state.user.userInfo
+    })
+  },
   data(){
     return {
       playerOptions: {
@@ -131,7 +147,11 @@ export default{
       courseId:{
         courseId: this.$route.params.courseId,
         chapterId: this.$route.params.chapterId,
-      }
+      },
+      // 播放当前的秒数
+      currentTime:0,
+      // 记录视频间隔的时间
+      count:0,
     }
   },
   created(){
@@ -156,7 +176,43 @@ export default{
     goBack(){
       window.history.go(-1)
     },
-  }
+    // 播放视频开始
+    playerReadied( player ){
+      let params = Object.assign(this.courseId,{
+        memberId:this.userInfo.id
+      })
+      historyByChapterId(params).then(res => {
+        // 判断有没有最后的播放记录
+        if(res.data.data != null){
+          // 有的
+          // 获得最后一次播放的时间
+          let lastTime = res.data.data.lastTime;
+          player.currentTime(lastTime);
+        } 
+      })
+    },
+    // 视频播放中
+    onPlayerTimeupdate( player ){
+      this.count++;
+      // 视频播放当前的秒数
+      this.currentTime = player.cache_.currentTime;
+      // 合并参数对象
+      let params = Object.assign(this.courseId,{
+        memberId:this.userInfo.id
+      },{
+        lastTime:this.currentTime
+      });
+      if(this.count == 25){
+        // 记录播放历史
+        recordHistory(params);
+        this.count = 0;
+      }
+    },
+    // 视频播放完
+    onPlayerEnded(){
+      console.log('end');
+    }
+  },
 }
 </script>
 

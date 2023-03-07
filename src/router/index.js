@@ -2,6 +2,8 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import CoursePlay from '../views/course/CoursePlay'
+import Cart from '../views/cart/Cart'
+import confirmOrder from '../views/cart/confirmOrder'
 
 Vue.use(VueRouter)
 
@@ -18,13 +20,23 @@ const routes = [
   },
   {
     path:'/course-info/:courseId',
-    name:'course-info',
+    name:'Course-info',
     component: () => import('../views/course/CourseInfo.vue'),
   },
   {
     path:'/course-play/:courseId/:chapterId',
-    name:'course-play',
+    name:'Course-play',
     component: CoursePlay
+  },
+  {
+    path:'/cart',
+    name:'Cart',
+    component: Cart
+  },
+  {
+    path:'/confirmOrder',
+    name:'confirmOrder',
+    component: confirmOrder
   }
 ]
 

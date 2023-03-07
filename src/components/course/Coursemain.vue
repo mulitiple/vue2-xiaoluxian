@@ -145,7 +145,7 @@
 
                   <div class="addCart">
                     <i class="el-icon-shopping-cart-1 cart"></i>
-                    <span class="cart-text">加入购物车</span>
+                    <span class="cart-text" @click="addShopCar(item.id)">加入购物车</span>
                   </div>
                 </div>
               </div>
@@ -174,6 +174,9 @@
 
 <script>
 import {getFirstCategorys,getSecondCategorys,courseSearch} from '@/common/api/course'
+import {addShopCar} from '@/common/api/shopCar'
+import { mapState } from 'vuex';
+import {createToken} from '@/common/api/createToken'
 export default {
   data() {
     return {
@@ -240,6 +243,11 @@ export default {
       },
       arrcourse: [], //课程信息
     };
+  },
+  computed:{
+    ...mapState({
+      userInfo:state => state.user.userInfo
+    })
   },
   created() {
     // 获取一级
@@ -419,7 +427,33 @@ export default {
         this.queryParams.entity.isMember = 1;
       }
       this.courseSearch(this.queryParams);
-    }
+    },
+    // 计入购物车
+    addShopCar(id){
+      let params = {
+        courseId: id,
+        memberId: this.userInfo.id
+      }
+      createToken().then(res => {
+        let token = res.data.token;
+         
+        addShopCar(params,token).then(res => {
+          if(res.meta.code != 200){
+            this.$message({
+              message: res.meta.msg,
+              type: 'warning'
+            });
+            return;
+          }else{
+            this.$message({
+              message: '加入购物车成功',
+              type: 'success'
+            });
+          }
+        })
+        
+      })
+    },
 
   },
 };

@@ -59,7 +59,7 @@ export function downloadAttachment( params ){
     url:'/api/course/downloadAttachment',
     method:'GET',
     params,
-    responseType: 'blob',
+    responseType: 'blob',    
   })
 }
 
@@ -68,6 +68,24 @@ export function playerPlay( params ){
   return request({
     url:'/api/player/play',
     method:'GET',
+    params,
+  })
+}
+
+// 记录播放历史
+export function recordHistory( data ){
+  return request({
+    url:'/api/course/history/recordHistory',
+    method:'post',
+    data,
+  })
+}
+
+// 视频播放最后一次记录
+export function historyByChapterId( params ){
+  return request({
+    url:'/api/course/history/getLastHistoryByChapterId',
+    method:'get',
     params,
   })
 }

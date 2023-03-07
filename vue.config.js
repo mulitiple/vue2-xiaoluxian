@@ -6,6 +6,7 @@ module.exports = {
 			'/api':{
 				target:'http://testapi.xuexiluxian.cn'
 			}
-		}
+		},
+		disableHostCheck: true
 	}
 }
