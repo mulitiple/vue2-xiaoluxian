@@ -31,12 +31,18 @@ const routes = [
   {
     path:'/cart',
     name:'Cart',
-    component: Cart
+    component: Cart,
+    meta:{
+      requiresAuth:true
+    }
   },
   {
     path:'/confirmOrder',
     name:'confirmOrder',
-    component: confirmOrder
+    component: confirmOrder,
+    meta:{
+      requiresAuth:true
+    }
   }
 ]
 
@@ -44,6 +50,20 @@ const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes
+})
+
+router.beforeEach((to,from,next)=>{
+  let token = localStorage.getItem('token');
+  if( to.matched.some(item => item.meta.requiresAuth)){
+    // 需要进行拦截
+    if( !token ){
+      next('/');
+    }else{
+      next();
+    }
+  }else{
+    next();
+  }
 })
 
 export default router

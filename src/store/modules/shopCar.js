@@ -2,6 +2,7 @@ export default {
   state:{
     shopList:[], //购物车数据
     selectedProducts: [], // 选中的数据
+    carArrId:[], // 购物车ID
   },
   getters:{
     isChecked(state){
@@ -26,14 +27,16 @@ export default {
   },
   mutations:{
     // 设置购物车数据
-    setShopCar(state,list){
+    setShopCar(state,list){      
       // 再次获取的时候需要先清空数据
       state.shopList = [];
       state.selectedProducts = [];
+      state.carArrId = [];
 
       list.forEach(item => {
         item['check'] = true;
         state.selectedProducts.push(item.courseId);
+        state.carArrId.push(item.id);
       })
 
       state.shopList = list;
@@ -45,6 +48,9 @@ export default {
         item['check'] = true;
         return item.courseId;
       })
+      state.carArrId = state.shopList.map(item =>{
+        return item.id;
+      })
     },
     // 全不选
     uncheckAll(state){
@@ -52,6 +58,7 @@ export default {
         item['check'] = false;
       })
       state.selectedProducts = [];
+      state.carArrId = [];
     },
     // 单选
     checkItem(state,index){
@@ -64,9 +71,11 @@ export default {
       if(idx > -1){
         state.shopList[index].check = false;
         state.selectedProducts.splice(idx,1);
+        state.carArrId.splice(idx,1);
       }else{
         state.shopList[index].check = true;
         state.selectedProducts.push(id);
+        state.carArrId.push(state.shopList[index].id);
       }
     }
   },

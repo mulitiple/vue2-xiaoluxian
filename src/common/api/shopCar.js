@@ -32,6 +32,18 @@ export function deleteShopCar(params,token){
   })
 }
 
+// 删除购物车数据(批量删除)
+export function deleteShopCars(data,token){
+  return request({
+    url:'api/shopcar/deleteShopCars',
+    method:'post',
+    data,
+    headers:{
+      token
+    }
+  })
+}
+
 // 去结算
 export function settlement(data){
   return request({
@@ -56,5 +68,23 @@ export function alipay(data){
     url:'api/alipay/createOrder',
     method:'post',
     data
+  })
+}
+
+// 查询订单状态：微信
+export function queryOrderWithWX(orderNumber){
+  return request({
+    url:'api/pay/wxpay/queryOrder',
+    method:'get',
+    params: orderNumber,
+  })
+}
+
+// 查询订单状态：支付宝
+export function queryOrderWithAli(orderNumber){
+  return request({
+    url:'api/pay/alipay/queryOrder',
+    method:'get',
+    params: orderNumber,
   })
 }

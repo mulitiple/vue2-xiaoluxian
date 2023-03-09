@@ -65,8 +65,9 @@
 </template>
 
 <script>
-import { settlement,wxpay,alipay } from '@/common/api/shopCar'
+import { settlement,wxpay,alipay,queryOrderWithWX,queryOrderWithAli,deleteShopCars } from '@/common/api/shopCar'
 import { mapState } from 'vuex';
+import {createToken} from '@/common/api/createToken'
 export default {
   data() {
     return {
@@ -77,7 +78,7 @@ export default {
       payModes:[], // 支付方式列表
       payCode:'', // 支付方式 [code]
       payurl:'', // 支付的二维码
-      orderNumber: "",
+      orderNumber: "", // 订单号
       qrCode: "",
       timeInterVal: "",
       payMethod: [],
@@ -96,7 +97,8 @@ export default {
   },
   computed:{
     ...mapState({
-      selectedProducts:state => state.shopCar.selectedProducts
+      selectedProducts:state => state.shopCar.selectedProducts,
+      carArrId: state => state.shopCar.carArrId
     })
   },
   methods: {
@@ -134,16 +136,67 @@ export default {
       // 微信支付
       if(this.payCode === 'wxpayment'){
         wxpay(params).then(res => {
+          // 二维码
           this.payurl = res.data.payurl;
+          // 订单号
+          this.orderNumber = res.data.orderNumber;
+          // 查询订单状态
+          this.timeInterVal = setInterval(this.queryOrderWithWX,2000);
+          // 删除购物车数据
+          this.delShopCar();
         })
       }
       // 支付宝支付
       if(this.payCode === 'alipayment'){
         alipay(params).then(res => {
+          // 二维码
           this.payurl = res.data.payurl;
+          // 订单号
+          this.orderNumber = res.data.orderNumber;
+          // 查询订单状态
+          this.timeInterVal = setInterval(this.queryOrderWithAli,2000);
+          // 删除购物车数据
+          this.delShopCar();
         })
       }
     },
+    // 查询微信订单状态
+    queryOrderWithWX(){
+      queryOrderWithWX({ orderNumber: this.orderNumber }).then(res => {
+        // 支付成功
+        if(res.meta.code == 200){
+          clearInterval(this.timeInterVal);
+          this.$router.push('/')
+        }
+        // 订单支付失败
+        if(res.meta.code == 400){
+          clearInterval(this.timeInterVal);
+          this.$router.push('/course')
+        }
+      })
+    },
+    // 查询支付宝订单状态
+    queryOrderWithAli(){
+      queryOrderWithAli({ orderNumber: this.orderNumber }).then(res => {
+        // 支付成功
+        if(res.meta.code == 200){
+          clearInterval(this.timeInterVal);
+          this.$router.push('/')
+        }
+        // 订单支付失败
+        if(res.meta.code == 400){
+          clearInterval(this.timeInterVal);
+          this.$router.push('/course')
+        }
+      })
+    },
+    // 删除购物车数据
+    delShopCar(){
+      createToken().then(res => {
+        deleteShopCars(this.carArrId,res.data.token);
+      })
+    }
+    
   },
 };
 </script>
