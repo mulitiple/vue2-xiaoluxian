@@ -12,6 +12,10 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 Vue.use(ElementUI);
 
+// 引入meta-info
+import MetaInfo from 'vue-meta-info';
+Vue.use(MetaInfo)
+
 
 Vue.config.productionTip = false
 

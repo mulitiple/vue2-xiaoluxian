@@ -2,9 +2,10 @@
 import axios from 'axios'
 import store from '@/store'
 // 1. 创建axios对象
-const service = axios.create({
-  baseURL: process.env.VUE_APP_BASE_API
-});
+// {
+//   baseURL: process.env.VUE_APP_BASE_API
+// }
+const service = axios.create();
 
 // 2.添加请求拦截器    ---前端给后端的东西，还没到后端
 // token头封装携带过去 没必要每次写的时候 都写一下headers
