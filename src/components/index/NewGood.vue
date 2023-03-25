@@ -22,6 +22,7 @@
           <li class="courseItem"
             v-for='item in list'
             :key='item.id'
+            @click="goCourseInfo(item.id)"
           >
             <div class="courseInfo">
               <div class="memberlogo">
@@ -74,6 +75,11 @@ export default {
     getMostNew(this.params).then(res => {
       this.list = res.data.pageInfo.list;
     })
+  },
+  methods:{
+    goCourseInfo(id){
+      this.$router.push('/course-info/' + id)
+    }
   }
 }
 </script>

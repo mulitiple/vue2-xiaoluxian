@@ -11,12 +11,12 @@
         <div class="content-nav">
           <ul>
             <li>
-              <router-link to="/" style="cursor: pointer" class="actives"
+              <router-link to="/" style="cursor: pointer" :class="{actives:active_home}"
                 >首 页</router-link
               >
             </li>
             <li>
-              <router-link to="/course" style="cursor: pointer" class=""
+              <router-link to="/course" style="cursor: pointer" :class="{actives:active_course}"
                 >课 程</router-link
               >
             </li>
@@ -205,6 +205,7 @@
 </template>
 
 <script>
+import { Loading } from 'element-ui'
 import {loginByJson,getInfo,sendCaptcha,loginByMobile} from '@/common/api/login'
 import {Encrypt} from '@/utils/aes'
 import {mapMutations,mapState} from 'vuex'
@@ -213,6 +214,8 @@ import Verify from '@/components/verifition/Verify.vue'
 export default{
   data () {
     return {
+      active_home:true,
+      active_course:false,
       phoneTimer:null,
       // 用户输入的验证码
       captcha:'发送短信验证码',
@@ -256,6 +259,27 @@ export default{
   created(){
     if(this.token){
       this.getInfo();
+    }
+  },
+  watch:{
+    $route:{
+      handler(to,from){
+        if(to.path == '/'){
+          this.active_course = false;
+          this.active_home = true;
+        }else if(to.path == '/course' || to.name == 'Course-info'){
+          this.active_home = false;
+          this.active_course = true;
+        }else{
+          this.active_home = false;
+          this.active_course = false;
+        }
+        let loadingInstance = Loading.service({ fullscreen: true, text: 'loading....' })
+        setTimeout(() => {
+          loadingInstance.close()
+        },1000)
+      },
+      immediate:true,
     }
   },
   methods:{

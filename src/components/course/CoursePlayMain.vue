@@ -2,12 +2,12 @@
   <div class="main">
     <div class="top">
       <span class="goBack el-icon-back" @click="goBack"> </span>
-      <span class="name">笑傲江湖 - 第一天</span>
+      <span class="name">{{ chapterInfo.chapterName  }}</span>
     </div>
     <div class="play">
       <div class="play-left" >
         <!-- 播放视频为防止防盗链拒绝请求 使用内网穿透改本机IP 来获取资源 -->
-        <!-- 因此处在小鹿线服务器上设置 不能实现视频播放效果 -->
+        <!-- 因此处在小鹿线服务器上设置 不能实现视频播放效果 改为静态假数据播放视频 开发时需要从后端服务器请求-->
         <video-player class="video-player vjs-custom-skin"
             ref="videoPlayer"
             :playsinline="true" id="abc"
@@ -43,22 +43,22 @@
             </div>
 
             <div class="course-container">
-              <div class="courseName" title="00000">11111111111111</div>
-              <div class="courseDesc">22222222222222222222</div>
+              <div class="courseName" title="00000">{{ chapterInfo.chapterName }}</div>
+              <div class="courseDesc">{{ courseChapters.description }}</div>
               <div class="courseImg">
-                <img src="" alt="">
+                <img :src="imgUrl" alt="">
               </div>
               <div class="teacherRecommend" >讲师介绍</div>
               <div class="teacher" >
                 <div class="teacherAvt">
-                  <img src="" alt="">
+                  <img src="../../assets/image/Avat62.png" alt="">
                 </div>
                 <div class="teacherInfo">
-                  <div class="teacherName">666888</div>
-                  <div class="teacherTag">999000</div>
+                  <div class="teacherName">{{ lecturerName }}</div>
+                  <!-- <div class="teacherTag">999000</div> -->
                 </div>
               </div>
-              <div class="teacherReacher" >123456789</div>
+              <!-- <div class="teacherReacher" >123456789</div> -->
             </div>
           </el-tab-pane>
           <el-tab-pane>
@@ -127,7 +127,7 @@ export default{
         fluid: false, // 当true时，Video.js player将拥有流体大小。换句话说，它将按比例缩放以适应其容器。
         sources: [{
           type: "",//这里的种类支持很多种：基本视频格式、直播、流媒体等，具体可以参看git网址项目
-          src: "" //url地址
+          src: "/test.mp4" //url地址
         }],
         poster: "", //你的封面地址
         // width: document.documentElement.clientWidth, //播放器宽度
@@ -142,7 +142,11 @@ export default{
       // 课程章节
       courseChapters:[],
       // 课程详情
-      courseInfo:{},
+      chapterInfo:{},
+      // 作者名称
+      lecturerName: '',
+      // 图片路径
+      imgUrl: '',
       // 接收的参数
       courseId:{
         courseId: this.$route.params.courseId,
@@ -163,13 +167,17 @@ export default{
       playerPlay(this.courseId).then(res => {
         console.log(res);
          
-        // 当前播放的视频
-        this.playerOptions.sources[0].src = res.data.playInfo.playInfoList[0].playURL;
+        // 当前播放的视频  课程视频url 403 防盗链 真实开发解开这段代码即可
+        // this.playerOptions.sources[0].src = res.data.playInfo.playInfoList[0].playURL;
 
         // 课程详情
         let courseInfo = res.data.courseInfo;
         // 课程章节
         this.courseChapters = courseInfo.bizCourseChapters;
+        this.chapterInfo = res.data.chapterInfo;
+        this.lecturerName = courseInfo.lecturerName;
+        this.imgUrl =  res.data.courseInfo.courseCover
+        
       })
     },
     //返回上一页

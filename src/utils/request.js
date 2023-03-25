@@ -1,3 +1,4 @@
+// import { Loading } from 'element-ui'
 // axios 二次封装
 import axios from 'axios'
 import store from '@/store'
@@ -9,12 +10,14 @@ const service = axios.create();
 
 // 2.添加请求拦截器    ---前端给后端的东西，还没到后端
 // token头封装携带过去 没必要每次写的时候 都写一下headers
+// let loadingInstance;
 service.interceptors.request.use(config => {
   let token = store.state.user.token;
   if(token){
     // 请求接口传递token给后端
     config.headers['Authorization'] = token;
   }
+  // loadingInstance = Loading.service({ fullscreen: true, text: 'loading....' })
   // 在发送请求之前做些什么
   return config;
 }, error => {
@@ -25,6 +28,9 @@ service.interceptors.request.use(config => {
 // 3.添加响应拦截器    ---后端给前端的东西
 // 判断code码
 service.interceptors.response.use(response => {
+  // if (loadingInstance) {
+  //   loadingInstance.close()
+  // }
   // 对响应数据做点什么
   return response.data;
 }, error => {
